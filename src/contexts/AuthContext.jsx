@@ -16,31 +16,35 @@ const AuthProvider = ({ children }) => {
 
   const initAuth = async () => {
     setLoading(true);
+    try {
+      console.log(user);
+    } catch (error) {
+      console.log({ error });
+    }
     //  verify user's authentication here
   };
 
   useEffect(() => {
     initAuth();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleLogin = async (payload, successCallback, errorCallback) => {
-    await axios
-      .post(authConfig.loginEndpoint, payload)
-      .then(async (response) => {
-        if (successCallback) successCallback(response);
-        // set authorization token and update user details here
-      })
-      .catch((err) => {
-        if (err) {
-          if (errorCallback) errorCallback(err);
-        }
-      });
+    try {
+      const response = await axios.post(authConfig.loginEndpoint, payload);
+      if (successCallback) successCallback(response);
+      // set authorization token and update user details here
+    } catch (error) {
+      if (error) {
+        if (errorCallback) errorCallback(error);
+      }
+    }
   };
 
   const handleLogout = () => {
     setUser(null);
     window.sessionStorage.removeItem(authConfig.token);
-    window.location.pathname = '/login';
+    window.location.pathname = '/';
   };
 
   const values = {
